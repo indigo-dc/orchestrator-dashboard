@@ -50,7 +50,7 @@
 </div>
   <div class="panel-group" id="accordion">
     {% for dep in deployments %}
-    {% if "COMPLETE" in dep.status %}
+    {% if dep.status == "CREATE_COMPLETE" %}
     <div class="panel panel-success">
     {% elif "FAIL" in dep.status %}
     <div class="panel panel-danger">
