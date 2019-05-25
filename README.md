@@ -124,19 +124,6 @@ cd orchestrator-dashboard
 docker build -f docker/Dockerfile -t orchestrator-dashboard .
 ```
 
-## How to setup a development environment
 
-```
-git clone https://github.com/maricaantonacci/orchestrator-dashboard.git
-cd orchestrator-dashboard
-python3 -m venv venv
-source venv/source/activate
-pip install -r requirements.txt
-```
-
-Start the dashboard app:
-```
-FLASK_app=orchdashboard flask run --host=0.0.0.0 --cert cert.pem --key privkey.pem --port 443
-```
 
 
