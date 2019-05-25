@@ -201,12 +201,11 @@ def add_sla_to_template(template, sla_id):
 
     nodes=template['topology_template']['node_templates']
     compute_nodes = []
-#    for key, dict in nodes.items():
-#        node_type=dict["type"]
-#        if node_type == "tosca.nodes.indigo.Compute" or node_type == "tosca.nodes.indigo.Container.Application.Docker.Chronos" :
-#            compute_nodes.append(key)
-#    template['topology_template']['policies']=[{ "deploy_on_specific_site": { "type": "tosca.policies.Placement", "properties": { "sla_id": sla_id }, "targets": compute_nodes  } }]
-    template['topology_template']['policies']=[{ "deploy_on_specific_site": { "type": "tosca.policies.Placement", "properties": { "sla_id": sla_id } } }]
+    for key, dict in nodes.items():
+        node_type=dict["type"]
+        if node_type == "tosca.nodes.indigo.Compute" or node_type == "tosca.nodes.indigo.Container.Application.Docker.Chronos" :
+            compute_nodes.append(key)
+    template['topology_template']['policies']=[{ "deploy_on_specific_site": { "type": "tosca.policies.Placement", "properties": { "sla_id": sla_id }, "targets": compute_nodes  } }]
     app.logger.info(yaml.dump(template,default_flow_style=False))
     return template
 #        
