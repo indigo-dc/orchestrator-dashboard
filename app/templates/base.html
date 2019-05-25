@@ -26,13 +26,13 @@
 	       </ul>	 
 	       {% if session['username'] %}
 	       <ul class="nav navbar-nav">
-		 <li class="active"><a href="{{ url_for("getslas") }}">SLAs</a></li>
                  <li class="active"><a href="{{ url_for("show_settings") }}">Settings</a></li>
                </ul>
                <ul class="nav navbar-nav navbar-right">
 	         <li class="dropdown">
 			 <a class="dropdown-toggle" data-toggle="dropdown" href="#"><img class="img-circle" src="{{ session['gravatar'] }}"</src> {{ session['username'] }}<span class="caret"></span></a>
 		       <ul class="dropdown-menu">
+			       <!--<li><a href="https://iam-test.indigo-datacloud.eu/logout?post_logout_redirect_uri=https://cloud-90-147-75-120.cloud.ba.infn.it">Logout</a></li> -->
                          <li><a href="{{ url_for("logout") }}">Logout</a></li>
 		       </ul>
 	         </li>

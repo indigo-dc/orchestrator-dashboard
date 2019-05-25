@@ -29,7 +29,6 @@ for path, subdirs, files in os.walk(toscaDir):
                toscaTemplates.append( os.path.relpath(os.path.join(path, name), toscaDir ))
 
 orchestratorUrl = app.config.get('ORCHESTRATOR_URL')
-slamUrl = app.config.get('SLAM_URL')
 
 @app.route('/settings')
 def show_settings():
@@ -42,46 +41,20 @@ def login():
     session.clear()
     return render_template('home.html')
 
-
-@app.route('/slas')
-def getslas():
-
-  if not iam_blueprint.session.authorized:
-     return redirect(url_for('login'))
-
-  slas={}
-
-  try:
-    access_token = iam_blueprint.token['access_token']
-    headers = {'Authorization': 'bearer %s' % (access_token)}
-
-    url = slamUrl + "/rest/slam/preferences/" + session['organisation_name']
-    response = requests.get(url, headers=headers, timeout=20)
-    app.logger.info("SLA response status: " + str(response.status_code))
-
-    response.raise_for_status()
-
-    slas = response.json()['sla']
-  except Exception as e:
-        flash("Error retrieving SLAs list: \n" + str(e), 'warning')
-
-  return render_template('sla.html', slas=slas)
-
 @app.route('/dashboard/<page>')
 @app.route('/<page>')
 @app.route('/')
 def home(page=0):
 
-  if not iam_blueprint.session.authorized:
-     return redirect(url_for('login'))
-  try:
+    if not iam_blueprint.session.authorized:
+       return redirect(url_for('login'))
+    
     account_info=iam_blueprint.session.get("/userinfo")
 
     if account_info.ok:
         account_info_json = account_info.json()
         session['username']  = account_info_json['name']
         session['gravatar'] = avatar(account_info_json['email'], 26)
-        session['organisation_name']=account_info_json['organisation_name']
         access_token = iam_blueprint.token['access_token']
 
         headers = {'Authorization': 'bearer %s' % (access_token)}
@@ -97,9 +70,7 @@ def home(page=0):
             pages=response.json()['page']['totalPages']
             app.logger.debug(pages)
         return render_template('deployments.html', deployments=deployments, tot_pages=pages, current_page=page)
-  except Exception:
-      app.logger.info("error")
-      return redirect(url_for('logout'))
+
 
 
 @app.route('/template/<depid>')

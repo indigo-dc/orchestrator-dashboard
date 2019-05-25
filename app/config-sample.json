@@ -3,6 +3,5 @@
     "IAM_CLIENT_SECRET": "my_client_secret",
     "IAM_BASE_URL": "https://iam-test.indigo-datacloud.eu",
     "ORCHESTRATOR_URL": "https://indigo-paas.cloud.ba.infn.it/orchestrator",
-    "SLAM_URL": "https://indigo-slam.cloud.ba.infn.it:8443",
     "TOSCA_TEMPLATES_DIR": "/opt/tosca-templates"
 }
