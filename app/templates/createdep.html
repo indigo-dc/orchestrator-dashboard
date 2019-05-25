@@ -22,7 +22,7 @@
           <!-- <option value="" selected disabled>-->
           <!-- <option hidden selected disabled >Select a template...</option> -->
           {% for tosca in templates %}
-          <option name="tosca_template" {%if selectedTemplate is defined %}{% if tosca == selectedTemplate %}selected{% endif %}{% endif %}>{{tosca}}</option>
+          <option name="tosca_template">{{tosca}}</option>
           {% endfor %}
        </select>
      </div>
