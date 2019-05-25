@@ -53,25 +53,9 @@
         {% endfor %}
         {% endif %}
         <div class="form-group">
-          <p><h2>Configure scheduling:</h2></p>
-          <label class="radio-inline">
-            <input id="autosched" type="radio" name="extra_opts.schedtype" value="auto" checked>Auto
-          </label>
-	  <label class="radio-inline">
-            <input id="mansched" type="radio" name="extra_opts.schedtype" value="man">Manual
-          </label>
-	</div>
-	<div id="autoschedConf" class="form-group">
-	   <label for="keepLastAttempt">Do not delete the deployment in case of failure
-		  <input type="checkbox" id="keepLastAttempt" name="extra_opts.keepLastAttempt" value="">
-	   </label>
-	</div>	
-	<div id="manschedConf" class="form-group">
-	  <label for="keepLastAttempt">Do not delete the deployment in case of failure
-                  <input type="checkbox" id="keepLastAttempt" name="extra_opts.keepLastAttempt" value="">
-	  </label><p><p>
-          <label>Select a provider:</label>
-          <select class="form-control" id="selectSLA" name="extra_opts.selectedSLA">
+          <input type="checkbox" id="checkboxSLA" name="selectSla" value=""></label>
+          <label for="sel1">Select a provider:</label>
+          <select class="form-control" id="selectSLA" name="selectedSLA" disabled>
           {% for sla in slas %}
             <option name="selectedSLA" value={{sla.id}}>{{sla.sitename}}: {{sla.service_type}}</option>
           {% endfor %}
@@ -82,11 +66,6 @@
   {% endif %}
 </div>
 
-<style>
-#manschedConf {
-  display: none;
-}
-</style>
 <script>
 $(document).ready(function() {
     $('.js-example-basic-single').select2();
@@ -101,21 +80,8 @@ $(document).ready(function () {
     });
 });
 
-$(document).ready(function () {
-  $("input[name='extra_opts.schedtype']").click(function() {
-    if ($("#mansched").is(":checked")){
-       $('#manschedConf').show();
-       $('#autoschedConf').hide();
-    }
-    else {
-	$('#manschedConf').hide();
-	$('#autoschedConf').show();
-    }
-  });
+$('#checkboxSLA').change(function() {
+    $('#selectSLA').attr('disabled',!this.checked)
 });
-
-//$('#checkboxSLA').change(function() {
-//    $('#selectSLA').attr('disabled',!this.checked)
-//});
 </script>
 {% endblock %}

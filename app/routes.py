@@ -219,35 +219,19 @@ def createdep():
 
   access_token = iam_blueprint.session.token['access_token']
 
-  app.logger.debug("Form data: " + json.dumps(request.form.to_dict()))
-
   try:
      with io.open( toscaDir + request.args.get('template')) as stream:
          template = yaml.load(stream)
+         if 'selectSla' in request.form.to_dict():
+             template = add_sla_to_template(template, request.form.get('selectedSLA'))
 
-         form_data = request.form.to_dict()
-        
-         params={}
-         if 'extra_opts.keepLastAttempt' in form_data:
-            params['keepLastAttempt'] = 'true'
-         else:
-            params['keepLastAttempt'] = 'false'
+         payload = { "template" : yaml.dump(template,default_flow_style=False), "parameters": request.form.to_dict() }
 
-         if form_data['extra_opts.schedtype'] == "man":
-             template = add_sla_to_template(template, form_data['extra_opts.selectedSLA'])
-
-         inputs = { k:v for (k,v) in form_data.items() if not k.startswith("extra_opts.") }
-
-         app.logger.debug("Parameters: " + json.dumps(inputs))
-
-         payload = { "template" : yaml.dump(template,default_flow_style=False), "parameters": inputs }
-
-     #body= json.dumps(payload)
+     body= json.dumps(payload)
 
      url = orchestratorUrl +  "/deployments/"
      headers = {'Content-Type': 'application/json', 'Authorization': 'bearer %s' % (access_token)}
-     #response = requests.post(url, data=body, headers=headers)
-     response = requests.post(url, json=payload, params=params, headers=headers)
+     response = requests.post(url, data=body, headers=headers)
 
      if not response.ok:
                flash("Error submitting deployment: \n" + response.text)
