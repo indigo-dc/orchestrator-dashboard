@@ -31,7 +31,6 @@ for path, subdirs, files in os.walk(toscaDir):
 orchestratorUrl = app.config.get('ORCHESTRATOR_URL')
 slamUrl = app.config.get('SLAM_URL')
 cmdbUrl = app.config.get('CMDB_URL')
-slam_cert = app.config.get('SLAM_CERT')
 
 @app.route('/settings')
 def show_settings():
@@ -65,10 +64,7 @@ def get_slas(access_token):
     headers = {'Authorization': 'bearer %s' % (access_token)}
 
     url = slamUrl + "/rest/slam/preferences/" + session['organisation_name']
-    verify = True
-    if slam_cert: 
-        verify = slam_cert
-    response = requests.get(url, headers=headers, timeout=20, verify=verify)
+    response = requests.get(url, headers=headers, timeout=20)
     app.logger.info("SLA response status: " + str(response.status_code))
 
     response.raise_for_status()
