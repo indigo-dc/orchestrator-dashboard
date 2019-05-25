@@ -30,7 +30,6 @@ for path, subdirs, files in os.walk(toscaDir):
 
 orchestratorUrl = app.config.get('ORCHESTRATOR_URL')
 slamUrl = app.config.get('SLAM_URL')
-cmdbUrl = app.config.get('CMDB_URL')
 
 @app.route('/settings')
 def show_settings():
@@ -44,39 +43,6 @@ def login():
     return render_template('home.html')
 
 
-def get_service_type(access_token, service_id):
-    headers = {'Authorization': 'bearer %s' % (access_token)}
-    url = cmdbUrl + "/service/id/" + service_id
-    response = requests.get(url, headers=headers, timeout=20)
-    response.raise_for_status()
-    app.logger.info(json.dumps(response.json()['data']['service_type']))
-
-    service_type=response.json()['data']['service_type']
-
-    if 'properties' in response.json()['data']:
-        if 'gpu_support' in response.json()['data']['properties']:
-            service_type = service_type + " (gpu_support: " + str(response.json()['data']['properties']['gpu_support']) + ")"
-
-    return service_type
-
-def get_slas(access_token):
-
-    headers = {'Authorization': 'bearer %s' % (access_token)}
-
-    url = slamUrl + "/rest/slam/preferences/" + session['organisation_name']
-    response = requests.get(url, headers=headers, timeout=20)
-    app.logger.info("SLA response status: " + str(response.status_code))
-
-    response.raise_for_status()
-    app.logger.info("SLA response: " + json.dumps(response.json()))
-    slas = response.json()['sla']
-
-    for i in range(len(slas)):
-       service_type=get_service_type(access_token,slas[i]['services'][0]['service_id'])
-       slas[i]['service_type']=service_type
-
-    return slas
-
 @app.route('/slas')
 def getslas():
 
@@ -87,14 +53,19 @@ def getslas():
 
   try:
     access_token = iam_blueprint.token['access_token']
-    slas = get_slas(access_token)
+    headers = {'Authorization': 'bearer %s' % (access_token)}
 
+    url = slamUrl + "/rest/slam/preferences/" + session['organisation_name']
+    response = requests.get(url, headers=headers, timeout=20)
+    app.logger.info("SLA response status: " + str(response.status_code))
+
+    response.raise_for_status()
+
+    slas = response.json()['sla']
   except Exception as e:
         flash("Error retrieving SLAs list: \n" + str(e), 'warning')
-        return redirect(url_for('home'))
 
   return render_template('sla.html', slas=slas)
-
 
 @app.route('/dashboard/<page>')
 @app.route('/<page>')
@@ -191,22 +162,7 @@ def depcreate():
            description = "N/A"
            if 'description' in template:
               description = template['description']
-
-           slas = get_slas(access_token)
-           return render_template('createdep.html', templates=toscaTemplates, selectedTemplate=selected_tosca, description=description,  inputs=inputs, slas=slas)
-
-def add_sla_to_template(template, sla_id):
-    # Add the placement policy
-
-    nodes=template['topology_template']['node_templates']
-    compute_nodes = []
-    for key, dict in nodes.items():
-        node_type=dict["type"]
-        if node_type == "tosca.nodes.indigo.Compute" or node_type == "tosca.nodes.indigo.Container.Application.Docker.Chronos" :
-            compute_nodes.append(key)
-    template['topology_template']['policies']=[{ "deploy_on_specific_site": { "type": "tosca.policies.Placement", "properties": { "sla_id": sla_id }, "targets": compute_nodes  } }]
-    app.logger.info(yaml.dump(template,default_flow_style=False))
-    return template
+           return render_template('createdep.html', templates=toscaTemplates, selectedTemplate=selected_tosca, description=description,  inputs=inputs)
 #        
 # 
 @app.route('/submit', methods=['POST'])
@@ -217,14 +173,11 @@ def createdep():
 
   access_token = iam_blueprint.session.token['access_token']
 
+
   try:
-     with io.open( toscaDir + request.args.get('template')) as stream:
-         template = yaml.load(stream)
-         if 'selectSla' in request.form.to_dict():
-             template = add_sla_to_template(template, request.form.get('selectedSLA'))
-
-         payload = { "template" : yaml.dump(template,default_flow_style=False), "parameters": request.form.to_dict() }
-
+     with io.open( toscaDir + request.args.get('template')) as stream:   
+        payload = { "template" : stream.read(), "parameters": request.form.to_dict() }
+      
      body= json.dumps(payload)
 
      url = orchestratorUrl +  "/deployments/"
@@ -233,11 +186,10 @@ def createdep():
 
      if not response.ok:
                flash("Error submitting deployment: \n" + response.text)
-
+    
      return redirect(url_for('home'))
- 
   except Exception as e:
-     flash("Error submitting deployment:" + str(e) + ". Please retry")
+     app.logger.error("Error submitting deployment:" + str(e))
      return redirect(url_for('home'))
 
 
@@ -247,5 +199,4 @@ def logout():
    iam_blueprint.session.get("/logout")
 #   del iam_blueprint.session.token
    return redirect(url_for('login'))
-
 

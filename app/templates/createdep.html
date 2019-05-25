@@ -52,15 +52,6 @@
         </div>
         {% endfor %}
         {% endif %}
-        <div class="form-group">
-          <input type="checkbox" id="checkboxSLA" name="selectSla" value=""></label>
-          <label for="sel1">Select a provider:</label>
-          <select class="form-control" id="selectSLA" name="selectedSLA" disabled>
-          {% for sla in slas %}
-            <option name="selectedSLA" value={{sla.id}}>{{sla.provider}}: {{sla.service_type}}</option>
-          {% endfor %}
-          </select>
-        </div>	
         <button type="submit" class="btn btn-success submitBtn">Submit</button>
       </form>
   {% endif %}
@@ -78,10 +69,6 @@ $(document).ready(function () {
         $(".submitBtn").attr("disabled", true);
         return true;
     });
-});
-
-$('#checkboxSLA').change(function() {
-    $('#selectSLA').attr('disabled',!this.checked)
 });
 </script>
 {% endblock %}

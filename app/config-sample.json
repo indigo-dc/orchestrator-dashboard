@@ -4,6 +4,5 @@
     "IAM_BASE_URL": "https://iam-test.indigo-datacloud.eu",
     "ORCHESTRATOR_URL": "https://indigo-paas.cloud.ba.infn.it/orchestrator",
     "SLAM_URL": "https://indigo-slam.cloud.ba.infn.it:8443",
-    "CMDB_URL": "https://indigo-paas.cloud.ba.infn.it/cmdb",
     "TOSCA_TEMPLATES_DIR": "/opt/tosca-templates"
 }

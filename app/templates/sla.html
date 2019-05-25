@@ -16,16 +16,13 @@
 <div class=text-left>
   <h3>Service Level Agreements:</h3>
 </div>
-<div class="well well-small">
-  <button class="btn btn-small btn-default" onclick="location.href='{{ url_for("getslas") }}'"><span class="glyphicon glyphicon-refresh"></span> Refresh</button>
-</div>
+
 <div class="table-responsive">
   <table class="table table-striped">
     <thead>
       <tr>
-	<!-- <th>id</th>-->
+        <th>id</th>
         <th>Provider</th>
-	<th>Service Type</th>
         <th>Start date</th>
 	<th>End date</th>
       </tr>
@@ -33,9 +30,8 @@
     <tbody>
       {% for sla in slas %}
       <tr>
-	 <!-- <td>{{sla.id}}</td>-->
+	 <td>{{sla.id}}</td>
 	 <td>{{sla.provider}}</td>
-	 <td>{{sla.service_type}}</td>
 	 <td>{{sla.start_date}}</td>
 	 <td>{{sla.end_date}}</td>
       </tr>

@@ -29,9 +29,7 @@ Create the `config.json` file (see the [example](app/config-sample.json)):
     "IAM_CLIENT_SECRET": "*****",
     "IAM_BASE_URL": "https://iam-test.indigo-datacloud.eu",
     "ORCHESTRATOR_URL": "https://indigo-paas.cloud.ba.infn.it/orchestrator",
-    "TOSCA_TEMPLATES_DIR": "/opt/tosca-templates",
-    "SLAM_URL": "https://indigo-slam.cloud.ba.infn.it:8443",
-    "CMDB_URL": "https://indigo-paas.cloud.ba.infn.it/cmdb"
+    "TOSCA_TEMPLATES_DIR": "/opt/tosca-templates"
 }
 ````
 Clone the tosca-templates repository to get a set of tosca templates that the dashboard will load, e.g.:

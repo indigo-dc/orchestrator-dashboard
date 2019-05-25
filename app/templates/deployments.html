@@ -84,17 +84,19 @@
   </div>
   {% if tot_pages > 1 %}
   <div class="center">
-    <div id="pagination" class="pagination">
+    <div class="pagination">
+      <a href="{{ url_for("home", page=0 ) }}">&laquo;</a>
       {% for p in range(tot_pages) %}
       <a href="{{ url_for("home", page=p ) }}" {% if p == (current_page|int) %}class="active"{% endif %} >{{ p+1 }}</a>
       {% endfor %}
+      <a href="{{ url_for("home", page=(tot_pages-1) ) }}">&raquo;</a>
     </div>
   </div>
   {% endif %}
 </div>
 
 <script>
-  links = document.querySelectorAll("#pagination > a")
+  links = document.querySelectorAll("a")
   links.forEach(function (item) {
     item.addEventListener('click', function () {
       //reset the color of other links
