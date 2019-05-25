@@ -57,7 +57,7 @@
           <label for="sel1">Select a provider:</label>
           <select class="form-control" id="selectSLA" name="selectedSLA" disabled>
           {% for sla in slas %}
-            <option name="selectedSLA" value={{sla.id}}>{{sla.sitename}}: {{sla.service_type}}</option>
+            <option name="selectedSLA" value={{sla.id}}>{{sla.provider}}: {{sla.service_type}}</option>
           {% endfor %}
           </select>
         </div>	

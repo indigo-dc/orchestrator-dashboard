@@ -44,7 +44,7 @@ def login():
     return render_template('home.html')
 
 
-def get_sla_extra_info(access_token, service_id):
+def get_service_type(access_token, service_id):
     headers = {'Authorization': 'bearer %s' % (access_token)}
     url = cmdbUrl + "/service/id/" + service_id
     response = requests.get(url, headers=headers, timeout=20)
@@ -52,12 +52,12 @@ def get_sla_extra_info(access_token, service_id):
     app.logger.info(json.dumps(response.json()['data']['service_type']))
 
     service_type=response.json()['data']['service_type']
-    sitename=response.json()['data']['sitename'] 
+
     if 'properties' in response.json()['data']:
         if 'gpu_support' in response.json()['data']['properties']:
             service_type = service_type + " (gpu_support: " + str(response.json()['data']['properties']['gpu_support']) + ")"
 
-    return sitename, service_type
+    return service_type
 
 def get_slas(access_token):
 
@@ -72,9 +72,8 @@ def get_slas(access_token):
     slas = response.json()['sla']
 
     for i in range(len(slas)):
-       sitename, service_type = get_sla_extra_info(access_token,slas[i]['services'][0]['service_id'])
+       service_type=get_service_type(access_token,slas[i]['services'][0]['service_id'])
        slas[i]['service_type']=service_type
-       slas[i]['sitename']=sitename
 
     return slas
 
