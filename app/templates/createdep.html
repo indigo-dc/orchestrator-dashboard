@@ -38,7 +38,7 @@
       </div>
       {% endif %}
     
-      {% if inputs|length > 0 %}
+      {% if inputs|length > 1 %}
       <h2>Set input values:</h2>
       {% endif %}
       <form action="{{ url_for('createdep', template=selectedTemplate) }}" method="post">
