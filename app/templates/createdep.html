@@ -43,7 +43,7 @@
       {% endif %}
       <form action="{{ url_for('createdep', template=selectedTemplate) }}" method="post">
         <input type="hidden" id="noinputId" name="noinput" value="">
-        {% if inputs|length > 0 %}
+        {% if inputs|length > 1 %}
         {% for key, value in inputs.items() %}
         <div class="form-group">
           <label for="{{key}}">{{key}}</label>
