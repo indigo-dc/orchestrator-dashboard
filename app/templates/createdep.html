@@ -41,7 +41,7 @@
       {% if inputs|length > 0 %}
       <h2>Set input values:</h2>
       {% endif %}
-      <form id="depSubmit" action="{{ url_for('createdep', template=selectedTemplate) }}" method="post">
+      <form action="{{ url_for('createdep', template=selectedTemplate) }}" method="post">
         <input type="hidden" id="noinputId" name="noinput" value="">
         {% if inputs|length > 0 %}
         {% for key, value in inputs.items() %}
@@ -52,7 +52,7 @@
         </div>
         {% endfor %}
         {% endif %}
-        <button type="submit" class="btn btn-success submitBtn">Submit</button>
+        <button type="submit" class="btn btn-success">Submit</button>
       </form>
   {% endif %}
 </div>
@@ -63,12 +63,4 @@ $(document).ready(function() {
 });
 </script>
 
-<script>
-$(document).ready(function () {
-    $("#depSubmit").submit(function () {
-        $(".submitBtn").attr("disabled", true);
-        return true;
-    });
-});
-</script>
 {% endblock %}

@@ -1,34 +1,6 @@
 {% extends "base.html" %}
+
 {% block content %}
-
-<style>
-.center {
-  text-align: center;
-}
-
-.pagination {
-  display: inline-block;
-}
-
-.pagination a {
-  color: black;
-  float: left;
-  padding: 8px 16px;
-  text-decoration: none;
-}
-
-.pagination a.active {
-  background-color: #4CAF50;
-  color: white;
-  border-radius: 5px;
-}
-
-.pagination a:hover:not(.active) {
-  background-color: #ddd;
-  border-radius: 5px;
-}
-</style>
-
 <div class="container">
 
 {% with messages = get_flashed_messages() %}
@@ -42,10 +14,10 @@
 {% endif %}
 {% endwith %}
 <div class=text-left>
-  <h3>My deployments ({{ current_page|int +1 }}/{{tot_pages}}):</h3>
+<h3>My deployments:</h3>
 </div>
 <div class="well well-small">
-  <button class="btn btn-small btn-default" onclick="location.href='{{ url_for("home", page=0) }}'"><span class="glyphicon glyphicon-refresh"></span> Refresh</button>
+  <button class="btn btn-small btn-default" onclick="location.href='{{ url_for("home") }}'"><span class="glyphicon glyphicon-refresh"></span> Refresh</button>
   <button type=button class="btn btn-small btn-primary" onclick="location.href='{{ url_for("depcreate") }}'"><span class="glyphicon glyphicon-plus"></span> New deployment</button>
 </div>
   <div class="panel-group" id="accordion">
@@ -74,51 +46,14 @@
         <p><b>OUTPUTS</b><pre> {{dep.outputs | tojson_pretty() | safe }}</pre></p>
         <button type=button class="btn btn-default" onclick="location.href='{{ url_for("deptemplate", depid=dep.uuid) }}'">
            <span class="glyphicon glyphicon-search"></span> show template</button>
-	<button type=button class="btn btn-default" data-toggle="confirmation" href="{{ url_for("depdel", depid=dep.uuid) }}">
+        <button type=button class="btn btn-default" onclick="location.href='{{ url_for("depdel", depid=dep.uuid) }}'">
            <span class="glyphicon glyphicon-trash"></span> delete
         </button>
         </div>
       </div>
     </div>
     {% endfor %}
-  </div>
-  {% if tot_pages > 1 %}
-  <div class="center">
-    <div class="pagination">
-      <a href="{{ url_for("home", page=0 ) }}">&laquo;</a>
-      {% for p in range(tot_pages) %}
-      <a href="{{ url_for("home", page=p ) }}" {% if p == (current_page|int) %}class="active"{% endif %} >{{ p+1 }}</a>
-      {% endfor %}
-      <a href="{{ url_for("home", page=(tot_pages-1) ) }}">&raquo;</a>
-    </div>
-  </div>
-  {% endif %}
+  </div> 
 </div>
-
-<script>
-  links = document.querySelectorAll("a")
-  links.forEach(function (item) {
-    item.addEventListener('click', function () {
-      //reset the color of other links
-      links.forEach(function (item) {
-        item.classList.remove("active")
-      })
-      // apply the style to the link
-      this.classList.add("active")
-    });
-  })
-
-</script>
-
-<script>
-  $('[data-toggle=confirmation]').confirmation({
-  rootSelector: '[data-toggle=confirmation]',
-  title: 'Do you really want to delete your deployment?',
-  popout: true,
-  btnOkClass: 'btn btn-xs btn-success',
-  btnCancelClass: 'btn btn-xs btn-danger'
-  });
-</script>
-
 {% endblock %}
 

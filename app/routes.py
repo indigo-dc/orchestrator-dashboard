@@ -1,4 +1,4 @@
-from app import app, iam_blueprint, iam_base_url
+from app import app, iam_blueprint
 from flask import json, current_app, render_template, request, redirect, url_for, flash, session
 import requests, json
 import yaml
@@ -30,21 +30,15 @@ for path, subdirs, files in os.walk(toscaDir):
 
 orchestratorUrl = app.config.get('ORCHESTRATOR_URL')
 
-@app.route('/settings')
-def show_settings():
-    if not iam_blueprint.session.authorized:
-       return redirect(url_for('login'))
-    return render_template('settings.html', orchestrator_url=orchestratorUrl, iam_url=iam_base_url)
-
+#@app.route('/')
 @app.route('/login')
 def login():
     session.clear()
     return render_template('home.html')
 
-@app.route('/dashboard/<page>')
-@app.route('/<page>')
+@app.route('/dashboard')
 @app.route('/')
-def home(page=0):
+def home():
 
     if not iam_blueprint.session.authorized:
        return redirect(url_for('login'))
@@ -59,7 +53,7 @@ def home(page=0):
 
         headers = {'Authorization': 'bearer %s' % (access_token)}
 
-        url = orchestratorUrl +  "/deployments?createdBy=me&page=" + str(page)
+        url = orchestratorUrl +  "/deployments?createdBy=me"
         response = requests.get(url, headers=headers)
 
         deployments = {}
@@ -67,9 +61,7 @@ def home(page=0):
             flash("Error retrieving deployment list: \n" + response.text, 'warning')
         else:
             deployments = response.json()["content"]
-            pages=response.json()['page']['totalPages']
-            app.logger.debug(pages)
-        return render_template('deployments.html', deployments=deployments, tot_pages=pages, current_page=page)
+        return render_template('deployments.html', deployments=deployments)
 
 
 
@@ -170,4 +162,3 @@ def logout():
    iam_blueprint.session.get("/logout")
 #   del iam_blueprint.session.token
    return redirect(url_for('login'))
-
