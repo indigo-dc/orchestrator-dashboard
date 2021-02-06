@@ -1,0 +1,41 @@
+<!-- start tabs creation section -->
+<ul class="nav nav-tabs">
+  <li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#InputValues">Input Values</a></li>
+  <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#Advanced">Advanced</a></li>
+</ul>
+<!-- end tab creation section -->
+<div class="tab-content">
+{% set inputs=template['inputs'] %}
+    <!-- inputs -->
+  <div class="tab-pane fade show active" id=InputValues>
+    {% if inputs|length > 0 %}
+      {% for key, value in inputs.items() %}
+        <div class="form-group">
+          <label for="{{key}}">{{key}}</label>
+
+	  <!-- select type if constraints are defined -->
+	  {% set constraints = value.constraints | selectattr('valid_values') | map(attribute='valid_values') | list  %}
+	  {% if constraints %}
+	  <select class="js-example-basic-single js-states form-control" id="{{key}}" name="{{key}}">
+          {% for val in constraints[0] %}
+             <option value="{{val}}">{{val}}</option>
+          {% endfor %}
+          </select>
+	  {% else %}
+	  <!-- text type, hide fields with password -->
+          <input {% if 'password' in key %}type="password"{% else %}type="text"{% endif %} class="form-control" id="{{key}}" name="{{key}}" value="{{value.default}}" aria-describedby="help{{key}}" {% if value.required %}required{%endif%} />
+	  {% endif %}
+          <span id="help{{key}}" class="help-block">{{value.description}}</span>
+        </div>
+      {% endfor %}
+    {% else %}
+      <h2>No input value to submit.</h2>
+    {% endif %}
+  </div>
+  <!-- end inputs -->
+
+  <!-- scheduling -->
+  <div class="tab-pane fade" id="Advanced">
+    {% include 'advanced_config.html' %}
+  </div>
+</div>

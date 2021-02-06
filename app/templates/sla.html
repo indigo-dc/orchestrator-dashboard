@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container-fluid">
+
+    {% include 'flashed_messages.html' %}
+    <br>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+          <div class="row">
+            <div class="col-md-6">
+              <!-- Title -->
+              <h4 class="font-weight-bold text-primary">Resource Providers</h4>
+            </div>
+            <div class="col-md-6 text-right">
+              <!-- Button -->
+              <button class="btn btn-small btn-outline-secondary" onclick="location.href='{{ url_for("getslas") }}'"><span class="fas fa-sync"></span> Refresh</button>
+            </div>
+          </div> <!-- / .row -->
+        </div>
+        <div class="card-body">
+
+    <div class="table-responsive">
+        <table id="tableSLAs" class="table table-bordered table-striped table-hover" width="100%" cellspacing="0">
+            <thead>
+                <tr>
+	            <!-- <th>id</th>-->
+                    <th>Site</th>
+                    <th>Service Type</th>
+                    <th>Service endpoint</th>
+		    <th>Monitoring Info</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for sla in slas %}
+                <tr>
+	            <!-- <td>{{sla.id}}</td>-->
+	            <td>{{sla.sitename}}</td>
+	            <td>{{sla.service_type}}</td>
+	            <td>{{sla.endpoint}}</td>
+		    <td>
+	                <center><button type="button" id="getInfoBtn" data-id="{{sla.service_id}}" class="btn btn-small btn-info getInfoBtn" data-toggle="modal" data-target="#newModal" data-whatever="{{sla.sitename}}"><center>View data</button></center>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+	<!-- Modal Retrieve Monitoring Info -->
+        <div class="modal fade" id="newModal">
+          <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="get_secret">Monitoring</h5>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+              </div>
+              <div class="modal-body">
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+    </div>
+    </div>
+</div>
+
+<script>
+    $('#tableSLAs').dataTable( {
+        "responsive": true,
+        "order": [],
+        "columnDefs": [ {
+          "targets"  : 'no-sort',
+          "orderable": false,
+        }],
+        "order": [[ 0, "asc" ]]
+    });
+</script>
+
+<script>
+$(document).ready(function () {
+  $('#newModal').on('hidden.bs.modal', function () {
+    var modal = $(this)
+    modal.find('.modal-body').empty()
+  });
+});
+
+$(document).ready(function () {
+  $('#newModal').on('show.bs.modal', function (event) {
+     var button = $(event.relatedTarget) // Button that triggered the modal
+     var service_id = button.data('id')
+     var provider = button.data('whatever')
+     var modal = $(this)
+     if ( event.relatedTarget.id == "getInfoBtn") {
+         modal.find('.modal-body').html('Loading...').load("{{url_for('get_monitoring_info')}}" + "?service_id=" + service_id + "&provider=" + provider);
+     }
+  });
+});
+
+</script>
+
+{% endblock %}
+

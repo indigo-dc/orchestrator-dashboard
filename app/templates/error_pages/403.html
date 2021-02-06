@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+
+<div class="container-fluid">
+
+    <br>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+          <div class="row">
+            <div class="col-md-6">
+              <!-- Title -->
+              <h1 class="font-weight-bold text-primary">Oops!</h1>
+	      <h2> 403 Forbidden </h2>
+            </div>
+          </div> <!-- / .row -->
+        </div>
+        <div class="card-body">
+          <div class="alert alert-primary">
+            <h4>Sorry, you are not authorized.</h4>
+            {% if message %}
+	      <p>{{ message }}</p>
+	    {% endif %}
+          </div>
+          <div>
+              <button onclick='location.href="{{ url_for('logout') }}"' class="btn btn-primary btn-lg"><span class="fas fa-sign-out-alt"></span>
+                  Logout </button>
+          </div>
+  	</div> 
+    </div>
+</div>
+
+{% endblock %}

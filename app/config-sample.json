@@ -1,0 +1,18 @@
+{
+    "IAM_CLIENT_ID": "my_client_id",
+    "IAM_CLIENT_SECRET": "my_client_secret",
+    "IAM_BASE_URL": "https://iam-test.indigo-datacloud.eu",
+    "ORCHESTRATOR_URL": "https://indigo-paas.cloud.ba.infn.it/orchestrator",
+    "SLAM_URL": "https://indigo-slam.cloud.ba.infn.it:8443",
+    "CMDB_URL": "https://indigo-paas.cloud.ba.infn.it/cmdb",
+    "IM_URL": "https://indigo-paas.cloud.ba.infn.it/im",
+    "VAULT_URL": "https://indigo-vault.cloud.ba.infn.it:8200",
+    "VAULT_ROLE": "orchestrator",
+    "VAULT_OIDC_AUDIENCE": "********",
+    "TOSCA_TEMPLATES_DIR": "/opt/tosca-templates",
+    "IAM_GROUP_MEMBERSHIP": [ "group1" ],
+    "SUPPORT_EMAIL": "support@example.com",
+    "ENABLE_ADVANCED_MENU": "no",
+    "EXTERNAL_LINKS": [ { "url": "https://indigo-paas.cloud.ba.infn.it/status-page", "menu_item_name": "Services status" } ],
+    "LOG_LEVEL": "info"
+}

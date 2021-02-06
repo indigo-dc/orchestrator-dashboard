@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container-fluid">
+{% include 'flashed_messages.html' %}	
+  <br>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+          <div class="row">
+            <div class="col-md-6">
+              <!-- Title -->
+              <h1 class="font-weight-bold text-primary">Oops!</h1>
+	      <h2>500 Internal Server Error</h2>
+            </div>
+          </div> <!-- / .row -->
+        </div>
+	<div class="card-body">
+          <div class="alert alert-danger">
+              Sorry, something went wrong..Please, try again. 
+	      Contact the support {%if support_email %}({{ support_email }}){%endif %} if the error persists.
+          </div>
+  	</div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,31 @@
+version: '3.3'
+
+services:
+   db:
+     image: mysql:5.7
+     container_name: dashboard-db
+     volumes:
+       - /data/dashboard-db:/var/lib/mysql
+     ports:
+       - 3306:3306
+     restart: always
+     environment:
+       MYSQL_ROOT_PASSWORD: ****
+       MYSQL_DATABASE: orchestrator_dashboard
+       MYSQL_USER: dashboard
+       MYSQL_PASSWORD: ****
+
+   orchestrator-dashboard:
+     depends_on:
+       - db
+     image: indigo-dc/orchestrator-dashboard:stateful
+     container_name: orchestrator-dashboard
+     ports:
+       - "5002:5001"
+     restart: always
+     volumes:
+       - /etc/orchestrator-dashboard/config.json:/app/instance/config.json
+       #- /etc/orchestrator-dashboard/vault-config.json:/app/instance/vault-config.json
+       - /etc/orchestrator-dashboard/tosca-templates:/opt/tosca-templates
+       - /etc/orchestrator-dashboard/tosca-parameters:/opt/tosca-parameters
+       - /etc/orchestrator-dashboard/tosca-metadata:/opt/tosca-metadata

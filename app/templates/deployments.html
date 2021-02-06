@@ -1,0 +1,206 @@
+{% extends "base.html" %}
+{% block content %}
+
+
+<div class="container-fluid">
+{% set ar = namespace(found=false) %}
+{% include 'flashed_messages.html' %}
+  <br>
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+          <div class="row">
+            <div class="col-md-6">
+              <!-- Title -->
+              <h4 class="font-weight-bold text-primary">My deployments</h4>
+            </div>
+            <div class="col-md-6 text-right">
+              <!-- Button -->
+              <button type=button class='btn btn-outline-secondary' onclick='location.href="{{ url_for('showdeployments') }}"'><span class='fas fa-sync mr-2'></span>Refresh</button>
+              <button type=button class='btn btn-primary' onclick='location.href="{{ url_for('home') }}"'><span class='fas fa-plus mr-2'></span>New deployment</button>
+            </div>
+          </div> <!-- / .row -->
+        </div>
+        <div class="card-body">
+
+            <div class="table-responsive">
+            <table class="table table-striped table-hover" id="tableUserDeployments" width="100%" cellspacing="0">
+            <!--Table head-->
+              <thead>
+                <tr>
+                  <th>Deployment uuid</th>
+                  <th>Status</th>
+                  <th>Creation time</th>
+                  <th>Deployed At</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <!--Table head-->
+              <!--Table body-->
+              <tbody>
+                {% for deployment in deployments %}
+                {% if "IN_PROGRESS" in deployment.status %}
+                    {% set ar.found = true %}
+                {% endif %}
+                <tr>
+                    <th scope="row"><a href="#details{{deployment.uuid}}" data-toggle="modal" data-target="#details{{deployment.uuid}}">{{deployment.uuid}}</a></th>
+                    <td>
+                    {% if "COMPLETE" in deployment.status %}
+                    <span class="badge badge-success"/>
+                    {% elif "FAIL" in deployment.status %}
+                    <span class="badge badge-danger"/>
+                    {% else %}
+                    <span class="badge badge-warning text-white"><span class="spinner-grow spinner-grow-sm"></span>
+                    {% endif %}
+                    {{deployment.status}}</td>
+                    <td>{{deployment.creationTime}}</td>
+                    <td>{{deployment.cloudProviderName}}</td>
+                    <td>
+                      <div class="btn-group">
+                        <!-- DELETE -->
+                        <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delete_confirm_{{deployment.uuid}}" data-backdrop="static" data-keyboard="false">
+                          <span class="fas fa-trash-alt mr-2"></span>Delete
+                        </button>
+                        <button type="button" class="btn btn-danger dropdown-toggle dropdown-toggle-split" data-toggle="dropdown">
+                          <span class="sr-only">Toggle Dropdown</span>
+                        </button>
+                        <div class="dropdown-menu">
+                          <a class="dropdown-item" data-toggle="modal" data-target="#details{{deployment.uuid}}"><span class="fas fa-bars mr-2 grey-text"></span>Details</a>
+                          <a class="dropdown-item" href="{{ url_for('deptemplate', depid=deployment.uuid) }}"><span class="fas fa-search mr-2 grey-text"></span>Show template</a>
+			  <a class="dropdown-item {% if deployment.physicalId is not defined %}disabled{% endif %}" href="{{ url_for('deplog', physicalId=deployment.physicalId) }}"><span class="fas fa-file-alt mr-2 grey-text"></span>Log</a>
+                      </div>
+                    </td>
+                </tr>
+                <!-- Modal DELETE -->
+                <!-- Put modal here to avoid problem with table collapse -->
+                <div class="modal fade" id="delete_confirm_{{deployment.uuid}}" role="dialog">
+                  <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="delete_confirm_label_{{deployment.uuid}}">Confirm deployment deletion</h5>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                      </div>
+                      <div class="modal-body">
+                        Do you really want to delete the deployment {{deployment.uuid}}?
+                      </div>
+                      <div class="modal-footer">
+                        <a class="btn btn-primary cancelBtn" role="button" data-dismiss="modal">Cancel</a>
+                        <a class="btn btn-danger deleteBtn" role="button" href="{{ url_for("depdel", depid=deployment.uuid) }}">Delete deployment</a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- MODAL DETAILS -->
+                <div class="modal fade" id="details{{deployment.uuid}}" role="dialog">
+                    <div class="modal-dialog modal-xl" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="details_label_{{deployment.uuid}}"><i class="fa fa-info-circle mr-2" aria-hidden="true"></i>Deployment details</h5>
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="container">
+                                <!-- Nav tabs -->
+                                    <ul class="nav nav-tabs border-0" role="tablist">
+                                        <li class="nav-item"><a class="nav-link active border border-primary border-bottom-0" id="tab-overview{{deployment.uuid}}" href="#overview{{deployment.uuid}}" data-toggle="tab" role="tab" aria-controls="overview{{deployment.uuid}}" aria-selected="true">Overview</a></li>
+                                        <li class="nav-item"><a class="nav-link border border-primary border-bottom-0" id="tab-outputs{{deployment.uuid}}" href="#outputs{{deployment.uuid}}" data-toggle="tab" role="tab" aria-controls="outputs{{deployment.uuid}}" aria-selected="false">Outputs</a></li>
+                                    </ul>
+                                <!-- Tab panes -->
+                                    <div class="tab-content">
+                                        <div class="tab-pane pl-3 pt-3 fade show active border border-primary" id="overview{{deployment.uuid}}" role="tabpanel" aria-labelledby="tab-overview{{deployment.uuid}}">
+                                            <small>
+                                            <p><b>UUID: </b>{{deployment.uuid}}</p>
+                                            <p><b>STATUS: </b>{{deployment.status}}</p>
+                                            {% if deployment.statusReason %}
+                                            <p><b>ERROR MSG</b> {{deployment.statusReason}}</p>
+                                            {% endif %}
+                                            <p><b>CREATED AT: </b>{{deployment.creationTime}}</p>
+                                            <p><b>UPDATED AT: </b>{{deployment.updateTime}}</p>
+                                            <p><b>DEPLOYED AT: </b>{{deployment.cloudProviderName}}</p>
+                                            </small>
+                                        </div>
+                                        <div class="tab-pane pl-3 pt-3 fade border border-primary" id="outputs{{deployment.uuid}}" role="tabpanel" aria-labelledby="tab-outputs{{deployment.uuid}}">
+                                            <!--p><small><pre>{{deployment.outputs | tojson_pretty() | safe }}</pre></small></p-->
+                                            {% for k,v in deployment.outputs.items() %}
+					    {% if "node_creds" in k %}
+					    <p><small><strong>{{k}}.ssh_private_key</strong>: <pre>{{ v['token'] | replace("\\n", "\n") }}</pre></small></p>
+					    <p><small><strong>{{k}}.ssh_login</strong>: {{ v['user'] }}</small></p>		    
+					    {% elif "endpoint" in k %}
+					    <p><small><strong>{{k}}</strong>: <a href="{{v}}" target="_blank">{{v}}</a></small></p>
+					    {% else %}    
+					    <p><small><strong>{{k}}</strong>: {{v}}</small></p>
+					    {% endif %}
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+              </tbody>
+              <!--Table body-->
+            </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.modal-header {
+  background-color: #3374FF;
+  margin: 2px;
+  color: white;
+  padding:9px 15px;
+
+}
+
+.nav-tabs .nav-link:not(.active) {
+    border-color: transparent !important;
+}
+
+.modal-footer {
+    border-top: 0 none;
+    padding-top: 0;
+    padding-bottom: 0.3rem;
+    padding-right: 0.3rem;
+}
+
+.close {
+    color: #fff;
+    //opacity: 1;
+}
+</style>
+
+{% if ar.found %}
+<script>setTimeout(function(){location.reload();},30000);</script>
+{% endif %}
+
+<script>
+$(document).ready(function () {
+    $(".deleteBtn").click(function () {
+        // add spinner to button
+        $(this).parent().find(".cancelBtn").addClass("disabled", true);
+        $(this).addClass("disabled", true);
+        $(this).html( `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Deleting...` );
+    });
+});
+</script>
+
+<script>
+    $('#tableUserDeployments').dataTable( {
+        "responsive": true,
+        "order": [],
+        "columnDefs": [ {
+            "targets"  : 'no-sort',
+            "orderable": false,
+         }],
+        "order": [[ 2, "desc" ]]
+    });
+</script>
+
+{% endblock %}
+

@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container-fluid">
+
+    {% include 'flashed_messages.html' %}
+    <br>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+          <div class="row">
+            <div class="col-md-6">
+              <!-- Title -->
+              <h4 class="font-weight-bold text-primary">Service Credentials</h4>
+            </div>
+            <div class="col-md-6 text-right">
+            </div>
+          </div> <!-- / .row -->
+        </div>
+        <div class="card-body">
+
+    <div class="table-responsive">
+        <table id="tableSLAs" class="table table-bordered table-striped table-hover" width="100%" cellspacing="0">
+            <thead>
+                <tr>
+	            <!-- <th>id</th>-->
+                    <th>Site</th>
+                    <th>Endpoint</th>
+                    <th>Manage your credentials</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for sla in slas %}
+		{% if sla.iam_enabled|lower != 'true' %}
+                <tr>
+	            <td>{{sla.sitename}}</td>
+	            <td>{{sla.endpoint}}</td>
+		    <td>
+			    <button type="button" id="readBtn" data-id="{{sla.service_id}}" class="btn btn-small btn-info readBtn" data-toggle="modal" data-target="#newModal" data-whatever="{{sla.service_type}}">GET</button>
+			    <button type=button id="updateBtn" data-id="{{sla.service_id}}" class="btn btn-small btn-success" data-toggle="modal" data-target="#newModal" data-whatever="{{sla.service_type}}">SET</button>
+			    <button type=button id="deleteBtn" data-id="{{sla.service_id}}" class="btn btn-small btn-danger" data-toggle="modal" data-target="#deleteModal" data-whatever="{{sla.service_type}}" data-backdrop="static" data-keyboard="false">DELETE</button>
+	            </td>
+                </tr>
+		{% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+	<!-- Modal Retrieve/Update Credentials-->
+        <div class="modal fade" id="newModal">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="get_secret">Secrets</h5>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+              </div>
+              <div class="modal-body">
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Modal to delete credentials -->
+	<div class="modal fade" id="deleteModal" role="dialog">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">Confirm credentials deletion</h5>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+              </div>
+              <div class="modal-body">
+                Do you really want to delete your credentials?
+              </div>
+              <div class="modal-footer">
+                <a class="btn btn-primary cancelBtn" role="button" data-dismiss="modal">Cancel</a>
+                <a class="btn btn-danger deleteBtn" role="button" href="">Delete</a>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+    </div>
+    </div>
+</div>
+
+<script>
+    $('#tableSLAs').dataTable( {
+        "responsive": true,
+        "order": [],
+        "columnDefs": [ {
+          "targets"  : 'no-sort',
+          "orderable": false,
+        }],
+        "order": [[ 3, "asc" ]]
+    });
+</script>
+
+<script>
+$(document).ready(function () {
+  $('#newModal').on('hidden.bs.modal', function () {
+    var modal = $(this)
+    modal.find('.modal-body').empty()
+  });
+});
+
+$(document).ready(function () {
+  $('#newModal').on('show.bs.modal', function (event) {
+     var button = $(event.relatedTarget) // Button that triggered the modal
+     var service_id = button.data('id')
+     var service_type = button.data('whatever').split(" ",1)[0]	  
+     var modal = $(this)
+     if ( event.relatedTarget.id == "readBtn") {
+	 modal.find('.modal-body').html('Loading...').load("{{url_for('read_secret_from_vault')}}" + "?service_id=" + service_id + "&service_type=" + service_type);
+     }	  
+     if ( event.relatedTarget.id == "updateBtn") {
+        modal.find('.modal-body').html('Loading...').load("{{url_for('write_secret_to_vault')}}" + "?service_id=" + service_id + "&service_type=" + service_type);
+     }	     
+  });
+});
+
+</script>
+
+<script>
+$(document).ready(function () {
+    $(".deleteBtn").click(function () {
+        // add spinner to button
+        $(this).parent().find(".cancelBtn").addClass("disabled", true);
+        $(this).addClass("disabled", true);
+        $(this).html( `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Deleting...` );
+    });
+});
+
+$(document).ready(function () {
+  $('#deleteModal').on('show.bs.modal', function (event) {
+     var button = $(event.relatedTarget) // Button that triggered the modal
+     var service_id = button.data('id')
+     var service_type = button.data('whatever').split(" ",1)[0]
+     var modal = $(this)
+     modal.find(".deleteBtn")[0].setAttribute("href", "{{url_for('delete_secret_from_vault')}}?service_id="+service_id+"&service_type="+service_type);
+  });
+});
+</script>
+{% endblock %}
+

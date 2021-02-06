@@ -1,0 +1,33 @@
+<div class="container-fluid">
+    <div class="table-responsive">
+        <table id="tableMonitoring" class="table table-bordered table-striped table-hover" width="100%" cellspacing="0">
+            <thead>
+                <tr>
+                    <!-- <th>id</th>-->
+                    <th>Metric Name</th>
+                    <th>Metric Value</th>
+                </tr>
+            </thead>
+	    <tbody>
+	    {% for metric in monitoring_data %}
+	      <tr>
+                <td>{{ metric['metricName'] }}</td>
+		<td>{{ metric['metricValue'] }}</td>
+	      </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>	
+</div>
+
+<script>
+    $('#tableMonitoring').dataTable( {
+        "responsive": true,
+        "order": [],
+        "columnDefs": [ {
+            "targets"  : 'no-sort',
+            "orderable": false,
+         }],
+        "order": [[ 0, "desc" ]]
+    });
+</script>

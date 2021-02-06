@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container-fluid">
+
+    <br>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h4 class="font-weight-bold text-primary">Settings</h4>
+        </div>
+        <div class="card-body">
+
+    <div class="table-responsive">
+        <table id="tableServices" class="table table-bordered table-striped" width="100%" cellspacing="0">
+            <thead>
+                <tr>
+                    <!-- <th>id</th>-->
+                    <th>Service</th>
+                    <th>Endpoint</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Identity and Access Management (IAM)</td>
+                    <td>{{ iam_url }}</td>
+                </tr>
+                <tr>
+                    <td>PaaS Orchestrator</td>
+                    <td>{{ orchestrator_url }}</td>
+                </tr>
+		<tr>
+		    <td>Infrastructure Manager (IM)</td>
+                    <td>{{ orchestrator_conf['im_url'] }}</td>
+                </tr>
+		<tr>
+                    <td>SLA Manager (SLAM)</td>
+                    <td>{{ orchestrator_conf['slam_url'] }}</td>
+                </tr>
+		<tr>
+                    <td>Configuration Management DB (CMDB)</td>
+                    <td>{{ orchestrator_conf['cmdb_url'] }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    </div>
+    </div>
+</div>
+
+<script>
+    $('#tableServices').dataTable( {
+        "responsive": true,
+        "order": [],
+        "columnDefs": [ {
+          "targets"  : 'no-sort',
+          "orderable": false,
+        }],
+        "order": [[ 1, "asc" ]]
+    });
+</script>
+
+{% endblock %}

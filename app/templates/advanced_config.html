@@ -1,0 +1,41 @@
+<div class="form-group">
+<div class="form-check form-check-inline">
+     <input type="checkbox" class="form-check-input" id="providerTimeoutSet" name="extra_opts.providerTimeoutSet">
+     <label class="form-check-label" style="white-space: nowrap;" for="providerTimeout">Set deployment creation timeout (min)  </label>
+     <input type="number" class="form-control" id="providerTimeout" name="extra_opts.providerTimeout" style="width: 4em; height: 30px" min="5" value="" disabled>
+ </div>    
+</div>
+
+ <div class="form-check">
+     <input type="checkbox" class="form-check-input" id="keepLastAttempt" name="extra_opts.keepLastAttempt">
+     <label class="form-check-label" for="keepLastAttempt">Do not delete the deployment in case of failure</label>
+ </div>
+
+ <hr>
+ <!-- div class="form-check">
+    <input type="checkbox" class="form-check-input" id="sendEmailFeedback" name="extra_opts.sendEmailFeedback" checked="checked">
+    <label class="form-check-label" for="sendEmailFeedback">Send a confirmation email when complete</label>
+ </div -->
+ <br>
+ <div id="confScheduling" {% if session['enable_advanced_menu'] == "no" %}hidden{% endif %}>
+   <div class="form-group">
+       <h5>Configure scheduling:</h5>
+       <label class="radio-inline">
+           <input id="autosched" type="radio" name="extra_opts.schedtype" value="auto" checked> Auto
+       </label>
+       <label class="radio-inline">
+           <input id="mansched" type="radio" name="extra_opts.schedtype" value="man"> Manual
+       </label>
+   </div>
+
+   <div id="manschedConf" class="form-group">
+       <p></p>
+       <label>Select a provider:</label>
+       <select class="js-example-basic-single js-states form-control" id="selectSLA" name="extra_opts.selectedSLA">
+       {% for sla in slas %}
+           <option name="selectedSLA" value={{sla.id}}>{{sla.sitename}}: {{sla.service_type}}</option>
+       {% endfor %}
+       </select>
+   </div>
+   <hr>
+ </div>

@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container">
+
+    <br>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+          <div class="row">
+            <div class="col-md-6">
+              <!-- Title -->
+              <h4 class="font-weight-bold text-primary">Deployment log</h4>
+            </div>
+            <div class="col-md-6 text-right">
+              <!-- Button -->
+	      <button type=button class='btn btn-outline-primary' onclick='location.reload(true)'><span class='fas fa-sync mr-2'></span>Refresh</button>
+              <button type=button class="btn btn-small btn-outline-secondary" onclick="history.back()"><span class="fas fa-arrow-left mr-2"></span> Back</button>
+            </div>
+          </div> <!-- / .row -->
+        </div>
+
+        <div class="card-body">
+          <pre id="text-val">{{ log | safe }}</pre>
+        </div>
+	<div class="card-footer text-center">
+	<!-- input type="button" id="downloadBtn" value="Download log file"/-->
+	  <button type=button class='btn btn-outline-primary' onclick='location.reload(true)'><span class='fas fa-sync mr-2'></span>Refresh</button>
+	  <button class="btn btn-primary" id="downloadBtn"><i class="fa fa-download"></i> Download</button>
+	  <button class="btn btn-outline-primary" id="topBtn" onclick="topFunction()"><i class="fa fa-angle-double-up"></i> Top</a>
+	</div>  
+    </div>
+</div>
+
+<script>
+
+function topFunction() {
+  document.body.scrollTop = 0;
+  document.documentElement.scrollTop = 0;
+}
+
+function download(filename, text) {
+  var element = document.createElement('a');
+  element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+  element.setAttribute('download', filename);
+
+  element.style.display = 'none';
+  document.body.appendChild(element);
+
+  element.click();
+
+  document.body.removeChild(element);
+}
+
+document.getElementById("downloadBtn").addEventListener("click", function(){
+    var text = document.getElementById("text-val").innerHTML;
+    var filename = "deployment-log.txt";
+
+    download(filename, text);
+}, false);
+
+</script>
+{% endblock %}

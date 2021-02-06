@@ -1,0 +1,40 @@
+<script src="https://unpkg.com/bootstrap-show-password@1.2.1/dist/bootstrap-show-password.min.js"></script>
+{% if service_creds or mode=='empty-form' %}
+  {% set username_label, password_label = "Username", "Password" %}
+  {% if service_type == "com.amazonaws.ec2" %} 
+    {% set username_label, password_label = "Access Key", "Secret Key" %}
+  {% endif %}   
+  <form action="{{ url_for('write_secret_to_vault') }}?service_type={{service_type}}&service_id={{service_id}}" method="post">
+      <div class="form-group">
+	<label for="username"><strong>{{username_label}}</strong></label>
+        <div>
+	   <input type="text" class="form-control" name="username" id="username" value="{{service_creds.username}}">
+        </div>
+      </div>
+      <div class="form-group">
+	<label for="password"><strong>{{password_label}}</strong></label>
+        <div>
+          <input type="password" class="form-control" name="password" id="password" value="{{ service_creds.password }}" data-toggle="password">
+        </div>
+      </div>
+      {% if service_type == "org.openstack.nova" %}
+      <div class="form-group">
+        <label for="tenant"><strong>Tenant</strong></label>
+        <div>
+          <input type="text" class="form-control" name="tenant" id="tenant" value="{{ service_creds.tenant }}">
+        </div>
+      </div>
+      {% endif %}
+      {% if mode=='empty-form' %} 
+      <div class="form-group">
+         <div>
+           <button type="submit" class="btn btn-success">Submit</button>
+         </div>
+      </div>
+      {% endif %}
+    </form>
+
+{% else %} 
+<span>NO RESULTS</span>
+{% endif %}
+

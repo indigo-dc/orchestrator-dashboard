@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container">
+
+    {% include 'flashed_messages.html' %}	
+
+    <br>
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h4 class="font-weight-bold text-primary">
+            {% if template['metadata']['display_name'] is defined %}{{template['metadata']['display_name']}}{% else %}{{selectedTemplate}}{% endif %}
+            </h4>
+        </div>
+
+        <div class="card-body">
+            <div class="alert alert-info">
+                <strong>Description:</strong> {{template['description']}}
+            </div>
+
+            <form id="depSubmit" action="{{ url_for('createdep', template=selectedTemplate) }}" method="post">
+            {% if template['enable_config_form'] is defined and template['enable_config_form'] is sameas true %}
+                {% include 'config_form.html' %}
+            {% else %}
+                {% include 'default_form.html' %}
+            {% endif %}
+            <button type="submit" class="btn btn-success submitBtn">Submit</button>
+            <button id="cancelBtn" type=button class="btn btn-small btn-primary" onclick="location.href='{{ url_for('home') }}'">
+                <span class="fas fa-ban mr-2"></span>Cancel</button>
+            </form>
+        </div>
+    </div>
+
+</div>
+
+<style>
+#manschedConf {
+  display: none;
+}
+</style>
+
+<script>
+$(document).ready(function() {
+    $('.js-example-basic-single').select2({
+      width: '100%' // https://github.com/select2/select2/issues/4220
+    });
+});
+</script>
+
+<script>
+$(document).ready(function () {
+    $("#loadToscaBtn").click(function () {
+        // add spinner to button
+        $(this).html( `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...` );
+    });
+});
+$(document).ready(function () {
+    $("#depSubmit").submit(function () {
+        //disable button on click
+        $(".submitBtn").attr("disabled", true);
+        // add spinner to button
+        $(".submitBtn").html( `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...` );
+        //disable cancel too
+        $("#cancelBtn").attr("disabled", true);
+        $("#cancelBtn").attr("onclick", "#");
+        return true;
+    });
+});
+$(document).ready(function () {
+  $("input[name='extra_opts.schedtype']").click(function() {
+    if ($("#mansched").is(":checked")){
+       $('#manschedConf').show();
+    }
+    else {
+	$('#manschedConf').hide();
+    }
+  });
+});
+//$('#checkboxSLA').change(function() {
+//    $('#selectSLA').attr('disabled',!this.checked)
+//});
+$(document).ready(function () {
+  $("input[name='extra_opts.providerTimeoutSet']").click(function() {
+    if ($("#providerTimeoutSet").is(":checked")){
+       $('#providerTimeout').prop("disabled",false);
+       $('#providerTimeout').prop("value", 5);
+    }
+    else {
+        $('#providerTimeout').prop("disabled",true);
+        $('#providerTimeout').prop("value", "");
+    }
+  });
+});
+</script>
+{% endblock %}
