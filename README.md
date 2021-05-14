@@ -59,7 +59,7 @@ docker run -d -p 443:5001 --name='orchestrator-dashboard' \
            -v $PWD/key.pem:/certs/key.pem \
            -v $PWD/instance:/app/instance \
            -v $PWD/tosca-templates:/opt/tosca-templates \
-           marica/orchestrator-dashboard:latest
+           indigo-dc/orchestrator-dashboard:latest
 ```
 Access the dashboard at `https://<DASHBOARD_HOST>/`
 
@@ -105,11 +105,26 @@ Run the docker container:
 docker run -d -p 5001:5001 --name='orchestrator-dashboard' \
            -v $PWD/instance:/app/instance \
            -v $PWD/tosca-templates:/opt/tosca-templates \
-           marica/orchestrator-dashboard:latest
+           indigo-dc/orchestrator-dashboard:latest
 ```
 :warning: Remember to update the redirect uri in the IAM client to `https://<PROXY_HOST>/login/iam/authorized`
 
 Access the dashboard at `https://<PROXY_HOST>/`
+
+
+### Add trusted certificates
+
+If you need to install and trust certificates that are not included in the default CA bundle used by SLAT python application running in a docker container, you can mount the directory containing the cerficate(s) in PEM format (extensione .pem) in the container under the path /trusted_certs; e.g:
+
+```
+docker run -d -p 5001:5001 --name='orchestrator-dashboard' \
+           -v $PWD/instance:/app/instance \
+           -v $PWD/tosca-templates:/opt/tosca-templates \
+           -v $PWD/trusted_certs:/trusted_certs \
+           indigo-dc/orchestrator-dashboard:latest
+```
+The certificates provided in the directory will be automatically added to the python CA bundle.
+
 
 ### Performance tuning
 
